@@ -23,7 +23,11 @@ export function Footer() {
   const email = settings?.email_address?.trim() || null;
   const phone = settings?.phone_number?.trim() || null;
   const whatsapp = settings?.whatsapp_number?.trim() || settings?.phone_number?.trim() || null;
-  const phoneLink = phone ? `tel:+${phone.replace(/\D/g, "")}` : undefined;
+  const digits = phone?.replace(/\D/g, "");
+
+ const phoneLink = digits
+   ? `tel:${digits.startsWith("91") ? "+" + digits : "+91" + digits}`
+   : undefined;
   const whatsappLink = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, "")}` : undefined;
   const mapsLink = settings?.google_maps_url || "#";
   const facebookLink = settings?.facebook_url || "https://www.facebook.com/share/1L84KS34DJ/";
