@@ -23,7 +23,11 @@ export function Header() {
 
   const phone = settings?.phone_number?.trim() || null;
   const resolvedWhatsapp = settings?.whatsapp_number?.trim() || settings?.phone_number?.trim() || null;
-  const phoneLink = phone ? `tel:+${phone.replace(/\D/g, "")}` : undefined;
+  const digits = phone?.replace(/\D/g, "");
+
+ const phoneLink = digits
+   ? `tel:${digits.startsWith("91") ? "+" + digits : "+91" + digits}`
+   : undefined;
   const whatsappLink = resolvedWhatsapp
     ? waLink("Hi SP Sports Wear, I'd like to enquire about custom jerseys.", resolvedWhatsapp.replace(/\D/g, ""))
     : undefined;
