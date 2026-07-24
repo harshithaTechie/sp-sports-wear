@@ -85,6 +85,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+
+      {
+        name: "google-site-verification",
+        content: "IVaLorbsQX_s4tMqidY02deElBKdUznjGEMjaCH7e2M",
+      },
+
       { title: "SP Sports Wear — Custom Sportswear Manufacturer in India" },
       {
         name: "description",
