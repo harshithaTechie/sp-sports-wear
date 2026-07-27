@@ -195,7 +195,7 @@ function DesignsPage() {
           <DialogHeader>
             <DialogTitle>{editingProduct ? "Edit Design" : "Add New Design"}</DialogTitle>
           </DialogHeader>
-          <div className="overflow-y-auto max-h-[calc(90vh-120px)] pr-2">
+          <div className="pr-2">
             {loading ? (
               <p className="text-sm text-muted-foreground">Loading categories…</p>
             ) : !hasCategories ? (
