@@ -30,12 +30,13 @@ import { waLink } from "@/lib/whatsapp";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SP Sports Wear — Custom Sportswear Manufacturer in India" },
-      {
-        name: "description",
-        content:
-          "Custom jerseys, tracksuits and team uniforms manufactured in India for schools, colleges, clubs, academies, corporates and tournaments. Request a quote today.",
-      },
+      {title: "SP Sports Wear - Cherukupalli | Custom Jerseys & Sportswear" },
+      
+        {
+  name: "description",
+  content:
+    "SP Sports Wear - Cherukupalli manufactures custom sports jerseys, tracksuits, shorts, lowers, sleeveless t-shirts and caps for schools, colleges, sports clubs, academies and events in Andhra Pradesh and Telangana. Request a free quote today.",
+},
     ],
   }),
   component: Home,
