@@ -1,11 +1,15 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Check, Loader2, MessageCircle, Upload } from "lucide-react";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
+import { Check, Loader2, MessageCircle, Upload, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Section } from "@/components/site/Section";
 import { submitQuotationRequest } from "@/lib/orders.functions";
 import { uploadFileServer } from "@/lib/upload.functions";
+import { getProductBySlug } from "@/lib/catalog.functions";
 
 export const Route = createFileRoute("/customize")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    designSlug: typeof search.designSlug === "string" ? search.designSlug : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Custom Jersey Designer — SP Sports Wear" },
@@ -63,6 +67,9 @@ function createSizeMap(sizeLabels: readonly string[]) {
 
 function Customize() {
   const navigate = useNavigate();
+  const search = useSearch({ from: "/customize" });
+  const [selectedDesign, setSelectedDesign] = useState<any>(null);
+  const [loadingDesign, setLoadingDesign] = useState(false);
   const [product, setProduct] = useState<ProductCategory>(CATEGORIES[0]);
   const [jerseyCollection, setJerseyCollection] = useState<string>(JERSEY_COLLECTIONS[0]);
   const [color, setColor] = useState("Navy Blue");
@@ -81,6 +88,38 @@ function Customize() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [logoName, setLogoName] = useState("");
+
+  useEffect(() => {
+    async function loadDesign() {
+      if (search.designSlug) {
+        setLoadingDesign(true);
+        try {
+          const result = await getProductBySlug({ data: { slug: search.designSlug } });
+          if (result?.product) {
+            setSelectedDesign(result.product);
+            // Pre-fill form with design data
+            if (result.product.category?.name) {
+              const categoryName = result.product.category.name;
+              const categoryMatch = CATEGORIES.find(c => 
+                categoryName.toLowerCase().includes(c.toLowerCase()) ||
+                c.toLowerCase().includes(categoryName.toLowerCase())
+              );
+              if (categoryMatch) setProduct(categoryMatch as ProductCategory);
+            }
+            if (result.product.colors?.[0]) setColor(result.product.colors[0]);
+            if (result.product.fabric?.[0]) setFabric(result.product.fabric[0]);
+            if (result.product.collar_types?.[0]) setCollar(result.product.collar_types[0]);
+            if (result.product.sleeve_types?.[0]) setSleeve(result.product.sleeve_types[0]);
+          }
+        } catch (err) {
+          console.error("Failed to load design:", err);
+        } finally {
+          setLoadingDesign(false);
+        }
+      }
+    }
+    loadDesign();
+  }, [search.designSlug]);
 
   async function handleLogoUpload(file: File | undefined) {
     if (!file) return;
@@ -184,6 +223,7 @@ function Customize() {
           phone,
           email,
           logoUrl,
+          designId: selectedDesign?.id ?? null,
         },
       });
       navigate({ to: "/thank-you", search: { id: result.quotationId } });
@@ -195,26 +235,77 @@ function Customize() {
   return (
     <>
       <section className="bg-navy text-white">
-        <div className="container-x py-14 md:py-20">
+        <div className="container-x py-12 sm:py-14 md:py-20">
           <span className="eyebrow text-orange">Custom Jersey Designer</span>
-          <h1 className="mt-3 font-display text-4xl md:text-5xl font-bold">
+          <h1 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-balance">
             Build your kit. Send us the brief.
           </h1>
-          <p className="mt-4 max-w-2xl text-white/75">
+          <p className="mt-4 max-w-2xl text-white/75 text-sm sm:text-base">
             Configure your product, colors and quantities. Submit the form and our team will review your request and send a quotation to your contact details within 24 hours.
           </p>
         </div>
       </section>
 
+      {/* Selected Design Image */}
+      {loadingDesign ? (
+        <Section>
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-card">
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          </div>
+        </Section>
+      ) : selectedDesign ? (
+        <Section>
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-card">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-widest text-orange">Selected Design</span>
+                <h2 className="mt-1 font-display text-lg sm:text-xl font-bold text-primary">{selectedDesign.name}</h2>
+                {selectedDesign.category?.name && (
+                  <p className="mt-1 text-sm text-muted-foreground">{selectedDesign.category.name}</p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedDesign(null);
+                  navigate({ to: "/customize", search: { designSlug: undefined } });
+                }}
+                className="p-2 rounded-md hover:bg-surface text-muted-foreground hover:text-foreground transition self-start sm:self-auto"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="aspect-video overflow-hidden rounded-xl bg-surface">
+              {selectedDesign.images?.[0] || selectedDesign.image_url ? (
+                <img
+                  src={selectedDesign.images?.[0] || selectedDesign.image_url}
+                  alt={selectedDesign.name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                  No image available
+                </div>
+              )}
+            </div>
+            {selectedDesign.short_description && (
+              <p className="mt-4 text-sm text-muted-foreground">{selectedDesign.short_description}</p>
+            )}
+          </div>
+        </Section>
+      ) : null}
+
       <Section>
-        <form onSubmit={submit} className="grid gap-8 lg:grid-cols-3">
+        <form onSubmit={submit} className="grid gap-6 lg:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-6">
             {/* Product */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-card">
               <h2 className="font-display text-lg font-semibold text-primary">1. Product & Style</h2>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div className="mt-4 grid gap-4 grid-cols-1 sm:grid-cols-2">
                 <Field label="Product">
-                  <select value={product} onChange={(e) => setProduct(e.target.value)} className="input">
+                  <select value={product} onChange={(e) => setProduct(e.target.value as ProductCategory)} className="input">
                     {CATEGORIES.map((c) => (
                       <option key={c}>{c}</option>
                     ))}
@@ -263,7 +354,7 @@ function Customize() {
             </div>
 
             {/* Sizes */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-card">
               <h2 className="font-display text-lg font-semibold text-primary">2. Size Breakup</h2>
               <p className="text-xs text-muted-foreground mt-1">Minimum 10 pieces total.</p>
               <div className="mt-4 grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-4">
@@ -295,9 +386,9 @@ function Customize() {
             </div>
 
             {/* Team info */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-card">
               <h2 className="font-display text-lg font-semibold text-primary">3. Team & Branding</h2>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div className="mt-4 grid gap-4 grid-cols-1 sm:grid-cols-2">
                 <Field label="Team / Organization Name">
                   <input value={teamName} onChange={(e) => setTeamName(e.target.value)} className="input" />
                 </Field>
@@ -351,9 +442,9 @@ function Customize() {
             </div>
 
             {/* Contact */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
+            <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-card">
               <h2 className="font-display text-lg font-semibold text-primary">4. Your Contact</h2>
-              <div className="mt-4 grid gap-4 sm:grid-cols-3">
+              <div className="mt-4 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 <Field label="Full Name *">
                   <input required value={name} onChange={(e) => setName(e.target.value)} className="input" />
                 </Field>
@@ -383,9 +474,9 @@ function Customize() {
 
           {/* Summary */}
           <aside className="lg:col-span-1">
-            <div className="sticky top-28 rounded-2xl border border-border bg-navy text-white p-6 shadow-elevated">
+            <div className="sticky top-4 sm:top-28 rounded-2xl border border-border bg-navy text-white p-4 sm:p-6 shadow-elevated">
               <div className="eyebrow text-orange">Live Summary</div>
-              <h3 className="mt-2 font-display text-xl font-bold">{product}</h3>
+              <h3 className="mt-2 font-display text-lg sm:text-xl font-bold">{product}</h3>
               <dl className="mt-5 space-y-3 text-sm">
                 <Row label="Color" value={color} />
                 {showCollar && <Row label="Collar" value={collar} />}
@@ -395,7 +486,7 @@ function Customize() {
               </dl>
               <div className="mt-5 rounded-lg bg-white/10 p-4">
                 <div className="text-xs uppercase tracking-widest text-white/60">Total Quantity</div>
-                <div className="mt-1 font-display text-3xl font-bold">
+                <div className="mt-1 font-display text-2xl sm:text-3xl font-bold">
                   {total} <span className="text-sm font-normal text-white/60">pcs</span>
                 </div>
                 {total < 10 && (
@@ -404,7 +495,7 @@ function Customize() {
               </div>
               <button
                 type="submit"
-                className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-md bg-accent-gradient px-6 py-3.5 text-sm font-semibold text-white shadow-glow hover:brightness-110 transition"
+                className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-md bg-accent-gradient px-4 sm:px-6 py-3 sm:py-3.5 text-sm font-semibold text-white shadow-glow hover:brightness-110 transition"
               >
                 <MessageCircle className="h-4 w-4" /> Submit Quote Request
               </button>

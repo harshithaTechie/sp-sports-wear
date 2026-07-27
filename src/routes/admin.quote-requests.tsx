@@ -47,6 +47,13 @@ type QuoteRow = {
   notes: string | null;
   logo_url: string | null;
   created_at: string | null;
+
+  design_id: string | null;
+design: {
+  id: string;
+  name: string;
+  image_url: string | null;
+} | null;
 };
 
 function QuoteRequestsPage() {
@@ -92,21 +99,27 @@ function QuoteRequestsPage() {
     const { data, error } = await supabase
       .from("quotations")
       .select(`
-        id,
-        quotation_id,
-        customer_name,
-        customer_phone,
-        customer_email,
-        organization,
-        product_type,
-        fabric,
-        quantity,
-        total_amount,
-        notes,
-        logo_url,
-        status,
-        created_at
-      `)
+              id,
+              quotation_id,
+              customer_name,
+              customer_phone,
+              customer_email,
+              organization,
+              product_type,
+              fabric,
+              quantity,
+              total_amount,
+              notes,
+              logo_url,
+              status,
+              created_at,
+              design_id,
+             design:products!design_id (
+    id,
+    name,
+    image_url
+  )
+`)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -180,7 +193,7 @@ function QuoteRequestsPage() {
             No quote requests found.
           </div>
         ) : (
-          <table className="min-w-full text-sm">
+          <table className="min-w-[900px] w-full text-sm">
             <thead className="bg-muted">
               <tr>
                 <th className="px-4 py-3 text-left">Quote</th>
@@ -296,7 +309,7 @@ function QuoteRequestsPage() {
     </Button>
   </DialogTrigger>
 
-  <DialogContent className="max-w-2xl">
+  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
     <DialogHeader>
       <DialogTitle>
         Quote Details
@@ -318,6 +331,9 @@ function QuoteRequestsPage() {
         <strong>Customer</strong>
         <div>{quote.customer_name}</div>
         <div>{quote.customer_phone}</div>
+        {quote.customer_whatsapp && (
+          <div>WhatsApp: {quote.customer_whatsapp}</div>
+        )}
         {quote.customer_email && (
           <div>{quote.customer_email}</div>
         )}
@@ -328,17 +344,28 @@ function QuoteRequestsPage() {
         <div>{quote.organization ?? "—"}</div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <strong>Product</strong>
           <div>{quote.product_type ?? "—"}</div>
         </div>
+        {quote.design && (
+  <div>
+    <strong>Selected Design</strong>
 
-        <div>
-          <strong>Fabric</strong>
-          <div>{quote.fabric ?? "—"}</div>
-        </div>
+    <div className="mt-2 flex items-center gap-4">
+      <img
+        src={quote.design.image_url ?? ""}
+        alt={quote.design.name}
+        className="h-24 w-24 rounded border object-cover"
+      />
+
+      <div>
+        <p className="font-medium">{quote.design.name}</p>
+      </div>
+    </div>
+  </div>
+)}
 
         <div>
           <strong>Quantity</strong>
@@ -350,20 +377,26 @@ function QuoteRequestsPage() {
           <div>{quote.status ?? "pending"}</div>
         </div>
 
+        {quote.fabric && (
+          <div>
+            <strong>Fabric</strong>
+            <div>{quote.fabric}</div>
+          </div>
+        )}
       </div>
 
-      <div>
-        <strong>Customer Notes</strong>
-
-        <div className="rounded border p-3 whitespace-pre-wrap">
-          {getCustomerNotes(quote.notes)}
+      {quote.logo_url && (
+        <div>
+          <strong>Logo / Artwork</strong>
+          <div className="mt-2">
+            <img src={quote.logo_url} alt="Logo" className="h-20 w-20 object-contain rounded border border-border bg-muted p-2" />
+          </div>
         </div>
-      </div>
+      )}
 
       <div>
-        <strong>Original Request</strong>
-
-        <div className="rounded border p-3 whitespace-pre-wrap">
+        <strong>Quotation Details</strong>
+        <div className="rounded border p-3 whitespace-pre-wrap text-xs">
           {quote.notes ?? "—"}
         </div>
       </div>

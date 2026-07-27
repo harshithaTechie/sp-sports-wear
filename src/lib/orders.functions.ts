@@ -43,19 +43,37 @@ export const submitCustomOrder = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (!order) throw new Error("Order not created");
 
+    // Get field config for this product
+    const fieldConfig = getProductFieldConfig(data.product);
+
+    // Build customization object with only relevant fields
+    const customization: Record<string, any> = {};
+    
+    if (fieldConfig.showColor) {
+      customization.color = data.color;
+    }
+    if (fieldConfig.showCollar) {
+      customization.collar = data.collar;
+    }
+    if (fieldConfig.showSleeve) {
+      customization.sleeve = data.sleeve;
+    }
+    if (fieldConfig.showFabric) {
+      customization.fabric = data.fabric;
+    }
+    if (fieldConfig.showSponsor && data.sponsor) {
+      customization.sponsor = data.sponsor;
+    }
+    if (fieldConfig.showPlayers && data.players) {
+      customization.players = data.players;
+    }
+
     await supabaseAdmin.from("order_items").insert({
       order_id: order.id,
       product_name: data.product,
       quantity: totalQty,
       size_breakup: data.sizes,
-      customization: {
-        color: data.color,
-        collar: data.collar,
-        sleeve: data.sleeve,
-        fabric: data.fabric,
-        players: data.players,
-        sponsor: data.sponsor,
-      },
+      customization: Object.keys(customization).length > 0 ? customization : null,
     });
 
     await supabaseAdmin.from("order_status_events").insert({
@@ -72,17 +90,105 @@ const trackSchema = z.object({
   phone: z.string().min(1),
 });
 
+// Normalize phone number by removing all non-digit characters
+function normalizePhone(phone: string): string {
+  return phone.replace(/\D/g, '');
+}
+
 export const trackOrder = createServerFn({ method: "POST" })
   .validator((data) => trackSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: order, error } = await supabaseAdmin
+    // Normalize the input phone number
+    const normalizedPhone = normalizePhone(data.phone);
+
+    // Check if the input is a quotation ID (starts with QT-) or order ID (starts with SP-)
+    const isQuotationId = data.orderId.toUpperCase().startsWith("QT-");
+
+    if (isQuotationId) {
+      // Handle quotation ID tracking
+      const { data: quotation, error: quoteError } = await supabaseAdmin
+        .from("quotations")
+        .select("id, quotation_id, status, customer_phone, customer_whatsapp")
+        .ilike("quotation_id", data.orderId)
+        .maybeSingle();
+
+      if (quoteError || !quotation) {
+        console.error('Quotation lookup failed:', quoteError);
+        return null;
+      }
+
+      // Verify phone number matches
+      const quotePhoneMatch =
+        quotation.customer_phone === data.phone ||
+        quotation.customer_phone === normalizedPhone ||
+        quotation.customer_whatsapp === data.phone ||
+        quotation.customer_whatsapp === normalizedPhone;
+
+      if (!quotePhoneMatch) {
+        console.error('Phone mismatch:', { quotationPhone: quotation.customer_phone, inputPhone: data.phone });
+        return null;
+      }
+
+      // If quotation is still pending, return special response
+      if (quotation.status === "pending") {
+        return {
+          isPendingQuotation: true,
+          quotationId: quotation.quotation_id,
+          status: quotation.status
+        };
+      }
+
+      // If quotation is approved, find the linked order
+      if (quotation.status === "approved") {
+        const { data: order, error: orderError } = await supabaseAdmin
+          .from("orders")
+          .select("id, order_id, status, created_at, quotation_id")
+          .eq("quotation_id", quotation.quotation_id)
+          .maybeSingle() as any;
+
+        if (orderError || !order) {
+          console.error('Order lookup failed for quotation:', orderError);
+          console.error('Looking for order with quotation_id:', quotation.quotation_id);
+          return null;
+        }
+
+        const { data: events } = await supabaseAdmin
+          .from("order_status_events")
+          .select("status, notes, created_at")
+          .eq("order_id", order.id)
+          .order("created_at", { ascending: true });
+
+        return { order, events: events || [] };
+      }
+
+      // For other statuses (quoted, rejected, in_progress), return null
+      return null;
+    }
+
+    // Handle order ID tracking (existing logic)
+    let { data: order, error } = await supabaseAdmin
       .from("orders")
-      .select("id, order_id, status, created_at")
+      .select("id, order_id, status, created_at, quotation_id")
       .eq("order_id", data.orderId)
       .eq("customer_phone", data.phone)
       .single();
+
+    // If exact match fails, try with normalized phone number
+    if (error || !order) {
+      const { data: normalizedOrder, error: normalizedError } = await supabaseAdmin
+        .from("orders")
+        .select("id, order_id, status, created_at, quotation_id")
+        .eq("order_id", data.orderId)
+        .or(`customer_phone.eq.${normalizedPhone},customer_whatsapp.eq.${normalizedPhone},customer_phone.eq.${data.phone},customer_whatsapp.eq.${data.phone}`)
+        .maybeSingle() as any;
+
+      if (!normalizedError && normalizedOrder) {
+        order = normalizedOrder;
+        error = null;
+      }
+    }
 
     if (error || !order) return null;
 
@@ -241,7 +347,89 @@ const quotationSchema = z.object({
   phone: z.string().min(1),
   email: z.string().email().optional().or(z.literal("")),
   logoUrl: z.string().nullable(),
-});
+  designId: z.string().uuid().nullable().optional(),
+  });
+
+// Define which fields are relevant for each product type
+const PRODUCT_FIELD_CONFIG = {
+  // Jerseys: All customization fields
+  "Jerseys": {
+    showColor: true,
+    showCollar: true,
+    showSleeve: true,
+    showFabric: true,
+    showSponsor: true,
+    showPlayers: true,
+  },
+  // Tracksuits: Color, Fabric, Sponsor, Players (no collar/sleeve)
+  "Tracksuits": {
+    showColor: true,
+    showCollar: false,
+    showSleeve: false,
+    showFabric: true,
+    showSponsor: true,
+    showPlayers: true,
+  },
+  // Shorts: Color, Fabric, Sponsor, Players (no collar/sleeve)
+  "Shorts": {
+    showColor: true,
+    showCollar: false,
+    showSleeve: false,
+    showFabric: true,
+    showSponsor: true,
+    showPlayers: true,
+  },
+  // Lowers: Color, Fabric, Sponsor, Players (no collar/sleeve)
+  "Lowers": {
+    showColor: true,
+    showCollar: false,
+    showSleeve: false,
+    showFabric: true,
+    showSponsor: true,
+    showPlayers: true,
+  },
+  // Sleeveless T-Shirts: Color, Fabric, Sponsor, Players (no collar/sleeve)
+  "Sleeveless T-Shirts": {
+    showColor: true,
+    showCollar: false,
+    showSleeve: false,
+    showFabric: true,
+    showSponsor: true,
+    showPlayers: true,
+  },
+  // Caps: Only quantity and logo (no color, collar, sleeve, fabric, sponsor, players)
+  "Caps": {
+    showColor: false,
+    showCollar: false,
+    showSleeve: false,
+    showFabric: false,
+    showSponsor: false,
+    showPlayers: false,
+  },
+  // Flags: Only quantity and logo (no color, collar, sleeve, fabric, sponsor, players)
+  "Flags": {
+    showColor: false,
+    showCollar: false,
+    showSleeve: false,
+    showFabric: false,
+    showSponsor: false,
+    showPlayers: false,
+  },
+};
+
+// Get field config for a product, defaulting to full customization
+function getProductFieldConfig(productName: string) {
+  // Handle Jersey collections (e.g., "Jerseys — Schools & Colleges")
+  const baseProduct = productName.split(" — ")[0];
+  return PRODUCT_FIELD_CONFIG[baseProduct as keyof typeof PRODUCT_FIELD_CONFIG] || {
+    showColor: true,
+    showCollar: true,
+    showSleeve: true,
+    showFabric: true,
+    showSponsor: true,
+    showPlayers: true,
+  };
+}
 
 export const submitQuotationRequest = createServerFn({ method: "POST" })
   .validator((data) => quotationSchema.parse(data))
@@ -258,19 +446,57 @@ export const submitQuotationRequest = createServerFn({ method: "POST" })
       .map(([s, v]) => `${s}×${v}`)
       .join(", ");
 
-    const formattedNotes = [
+    // Get field config for this product
+    const fieldConfig = getProductFieldConfig(data.product);
+
+    // Build notes array with only relevant fields
+    const notesParts = [
       `Product: ${data.product}`,
-      `Color: ${data.color}`,
-      `Collar: ${data.collar}`,
-      `Sleeve: ${data.sleeve}`,
-      `Fabric: ${data.fabric}`,
       `Size Breakup: ${sizeBreakup}`,
       `Total Quantity: ${totalQty} pcs`,
-      `Team Name: ${data.teamName || "—"}`,
-      `Sponsors: ${data.sponsor || "—"}`,
-      `Players: ${data.players || "—"}`,
-      `Additional Notes: ${data.notes || "—"}`,
-    ].join("\n");
+    ];
+
+    // Only include color if relevant for this product
+    if (fieldConfig.showColor) {
+      notesParts.push(`Color: ${data.color}`);
+    }
+
+    // Only include collar if relevant for this product
+    if (fieldConfig.showCollar) {
+      notesParts.push(`Collar: ${data.collar}`);
+    }
+
+    // Only include sleeve if relevant for this product
+    if (fieldConfig.showSleeve) {
+      notesParts.push(`Sleeve: ${data.sleeve}`);
+    }
+
+    // Only include fabric if relevant for this product
+    if (fieldConfig.showFabric) {
+      notesParts.push(`Fabric: ${data.fabric}`);
+    }
+
+    // Only include sponsor if relevant for this product
+    if (fieldConfig.showSponsor && data.sponsor) {
+      notesParts.push(`Sponsors: ${data.sponsor}`);
+    }
+
+    // Only include players if relevant for this product
+    if (fieldConfig.showPlayers && data.players) {
+      notesParts.push(`Players: ${data.players}`);
+    }
+
+    // Always include team name if provided
+    if (data.teamName) {
+      notesParts.push(`Team Name: ${data.teamName}`);
+    }
+
+    // Always include additional notes if provided
+    if (data.notes) {
+      notesParts.push(`Additional Notes: ${data.notes}`);
+    }
+
+    const formattedNotes = notesParts.join("\n");
 
     const { data: quotation, error } = await supabaseAdmin
       .from("quotations")
@@ -283,6 +509,7 @@ export const submitQuotationRequest = createServerFn({ method: "POST" })
         product_type: data.product,
         fabric: data.fabric,
         quantity: totalQty,
+        design_id: data.designId,
         logo_url: data.logoUrl || null,
         notes: formattedNotes,
         status: "pending",

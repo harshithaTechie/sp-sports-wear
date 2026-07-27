@@ -55,23 +55,23 @@ function Gallery() {
   return (
     <>
       <section className="bg-navy text-white">
-        <div className="container-x py-14 md:py-20">
+        <div className="container-x py-12 sm:py-14 md:py-20">
           <span className="eyebrow text-orange">Design Collection</span>
-          <h1 className="mt-3 font-display text-4xl md:text-5xl font-bold">Explore our sportswear designs.</h1>
-          <p className="mt-4 max-w-2xl text-white/75">
+          <h1 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-balance">Explore our sportswear designs.</h1>
+          <p className="mt-4 max-w-2xl text-white/75 text-sm sm:text-base">
             A curated collection of jersey and sportswear designs you can fully customize for your team, school, college or event.
           </p>
         </div>
       </section>
 
       <Section>
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div className="mb-6 sm:mb-8 flex flex-wrap gap-2">
           {CATS.map((c) => (
             <button
               key={c}
               onClick={() => setCat(c)}
               className={cn(
-                "rounded-full border px-4 py-2 text-xs font-semibold transition",
+                "rounded-full border px-3 sm:px-4 py-2 text-xs font-semibold transition",
                 cat === c ? "border-transparent bg-primary text-primary-foreground" : "border-border bg-card text-foreground/70 hover:border-primary hover:text-primary",
               )}
             >
@@ -80,16 +80,16 @@ function Gallery() {
           ))}
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {filteredItems.map((g) => (
             <figure key={g.id} className="group overflow-hidden rounded-2xl border border-border bg-card">
               <div className="aspect-[4/3] overflow-hidden">
                 <img src={g.image_url} alt={g.title} loading="lazy" width={1280} height={960} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
               </div>
-              <figcaption className="p-5">
+              <figcaption className="p-4 sm:p-5">
                 <span className="text-[11px] uppercase tracking-widest text-orange font-semibold">{g.category}</span>
                 <h3 className="mt-1 font-display text-base font-semibold text-primary">{g.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{g.description}</p>
+                <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{g.description}</p>
               </figcaption>
             </figure>
           ))}

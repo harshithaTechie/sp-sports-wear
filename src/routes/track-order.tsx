@@ -43,10 +43,17 @@ function Track() {
     setLoading(true);
     setSearched(true);
     try {
-      const res = await trackOrder({ orderId: orderId.trim(), phone: phone.trim() });
+      const res = await trackOrder({
+  data: {
+    orderId: orderId.trim(),
+    phone: phone.trim(),
+  },
+});
       setOrderData(res);
       if (!res) {
         toast.error("No order found. Please check your credentials.");
+      } else if (res.isPendingQuotation) {
+        toast.info("Quotation found - awaiting approval");
       } else {
         toast.success("Order details retrieved");
       }
@@ -71,7 +78,7 @@ function Track() {
           <span className="eyebrow text-orange">Order Tracking</span>
           <h1 className="mt-3 font-display text-4xl md:text-5xl font-bold">Where is my order?</h1>
           <p className="mt-4 max-w-2xl text-white/75">
-            Enter your Order ID (e.g. SP-202607-1234) and your registered mobile number to
+            Enter your Order ID (e.g. SP-202607-1234) or Quotation ID (e.g. QT-202607-1234) and your registered mobile number to
             see live production status.
           </p>
 
@@ -81,7 +88,7 @@ function Track() {
               <input
                 value={orderId}
                 onChange={(e) => setOrderId(e.target.value)}
-                placeholder="Order ID (e.g. SP-202607-1234)"
+                placeholder="Order ID or Quotation ID (e.g. SP-202607-1234 or QT-202607-1234)"
                 required
                 className="w-full h-12 rounded-md bg-white/10 border border-white/20 pl-10 pr-4 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-orange"
               />
@@ -119,7 +126,16 @@ function Track() {
           <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-10 text-center text-destructive flex flex-col items-center justify-center gap-2">
             <Info className="h-8 w-8" />
             <span className="font-semibold">No order found matching those credentials</span>
-            <span className="text-xs text-muted-foreground max-w-md">Please ensure the Order ID is in the format SP-YYYYMM-XXXX and the phone number matches what was submitted.</span>
+            <span className="text-xs text-muted-foreground max-w-md">Please ensure the Order ID is in the format SP-YYYYMM-XXXX or Quotation ID is in the format QT-YYYYMM-XXXX and the phone number matches what was submitted.</span>
+          </div>
+        ) : orderData.isPendingQuotation ? (
+          <div className="rounded-2xl border border-orange/20 bg-orange/5 p-10 text-center flex flex-col items-center justify-center gap-3">
+            <Info className="h-8 w-8 text-orange" />
+            <span className="font-semibold text-orange">Quotation Awaiting Approval</span>
+            <span className="text-sm text-muted-foreground max-w-md">Your quotation has been received and is awaiting approval. Order tracking will become available once your quotation is approved.</span>
+            <div className="mt-2 text-xs text-muted-foreground">
+              Quotation ID: {orderData.quotationId}
+            </div>
           </div>
         ) : (
           <div className="rounded-2xl border border-border bg-card p-6 md:p-8 shadow-card">

@@ -64,10 +64,10 @@ function Contact() {
   return (
     <>
       <section className="bg-navy text-white">
-        <div className="container-x py-14 md:py-20">
+        <div className="container-x py-12 sm:py-14 md:py-20">
           <span className="eyebrow text-orange">Contact</span>
-          <h1 className="mt-3 font-display text-4xl md:text-5xl font-bold">Let's build your team's next kit.</h1>
-          <p className="mt-4 max-w-2xl text-white/75">
+          <h1 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-balance">Let's build your team's next kit.</h1>
+          <p className="mt-4 max-w-2xl text-white/75 text-sm sm:text-base">
             Reach us on WhatsApp for the fastest response, or send us an enquiry — our team
             typically replies within a few hours.
           </p>

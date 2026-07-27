@@ -262,87 +262,89 @@ function GalleryPage() {
       </div>
 
       <Dialog open={formOpen} onOpenChange={(open) => { if (!open) { resetForm(); setFormOpen(false); } else { setFormOpen(true); } }}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingItem ? "Edit Gallery Item" : "Add Gallery Item"}</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="gallery-title">Title</Label>
-              <Input id="gallery-title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="gallery-category">Category</Label>
-              <Select value={category} onValueChange={(value) => setCategory(value as GalleryCategory)}>
-                <SelectTrigger id="gallery-category">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {GALLERY_CATEGORIES.map((catValue) => (
-                    <SelectItem key={catValue} value={catValue}>
-                      {catValue}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="gallery-client">Customer / Team / Organization</Label>
-              <Input id="gallery-client" value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="ACME Team" />
-            </div>
-            <div className="space-y-3">
-              <Label>Upload Image</Label>
-              <div className="rounded-3xl border border-border bg-muted p-4">
-                <div className="mb-3 flex h-52 items-center justify-center overflow-hidden rounded-2xl bg-slate-950">
-                  {imageUrl ? (
-                    <img src={imageUrl} alt="Selected image preview" className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
-                      <Image className="h-12 w-12" />
-                      <p className="text-sm">No image selected yet.</p>
-                    </div>
-                  )}
-                </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept={ACCEPTED_TYPES.join(",")}
-                  className="hidden"
-                  onChange={(e) => handleImageFile(e.target.files?.[0] ?? undefined)}
-                />
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={uploadingImage}
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    {uploadingImage ? "Uploading…" : imageUrl ? "Replace image" : "Upload image"}
-                  </Button>
-                  <span className="text-sm text-muted-foreground">
-                    {uploadingImage
-                      ? "Uploading image..."
-                      : imageUrl
-                      ? "Image ready to save."
-                      : "Please upload a gallery image."}
-                  </span>
+          <div className="overflow-y-auto max-h-[calc(90vh-120px)] pr-2">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="gallery-title">Title</Label>
+                <Input id="gallery-title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="gallery-category">Category</Label>
+                <Select value={category} onValueChange={(value) => setCategory(value as GalleryCategory)}>
+                  <SelectTrigger id="gallery-category">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {GALLERY_CATEGORIES.map((catValue) => (
+                      <SelectItem key={catValue} value={catValue}>
+                        {catValue}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="gallery-client">Customer / Team / Organization</Label>
+                <Input id="gallery-client" value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="ACME Team" />
+              </div>
+              <div className="space-y-3">
+                <Label>Upload Image</Label>
+                <div className="rounded-3xl border border-border bg-muted p-4">
+                  <div className="mb-3 flex h-52 items-center justify-center overflow-hidden rounded-2xl bg-slate-950">
+                    {imageUrl ? (
+                      <img src={imageUrl} alt="Selected image preview" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                        <Image className="h-12 w-12" />
+                        <p className="text-sm">No image selected yet.</p>
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept={ACCEPTED_TYPES.join(",")}
+                    className="hidden"
+                    onChange={(e) => handleImageFile(e.target.files?.[0] ?? undefined)}
+                  />
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={uploadingImage}
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      {uploadingImage ? "Uploading…" : imageUrl ? "Replace image" : "Upload image"}
+                    </Button>
+                    <span className="text-sm text-muted-foreground">
+                      {uploadingImage
+                        ? "Uploading image..."
+                        : imageUrl
+                        ? "Image ready to save."
+                        : "Please upload a gallery image."}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="gallery-description">Description</Label>
-              <Textarea id="gallery-description" rows={4} value={description} onChange={(e) => setDescription(e.target.value)} />
-            </div>
-            <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={() => { resetForm(); setFormOpen(false); }}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={saving || uploadingImage || !canSubmit}>
-                {uploadingImage ? "Uploading…" : saving ? "Saving…" : editingItem ? "Save Changes" : "Add Item"}
-              </Button>
-            </div>
-          </form>
+              <div className="space-y-1.5">
+                <Label htmlFor="gallery-description">Description</Label>
+                <Textarea id="gallery-description" rows={4} value={description} onChange={(e) => setDescription(e.target.value)} />
+              </div>
+              <div className="flex justify-end gap-3">
+                <Button type="button" variant="outline" onClick={() => { resetForm(); setFormOpen(false); }}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={saving || uploadingImage || !canSubmit}>
+                  {uploadingImage ? "Uploading…" : saving ? "Saving…" : editingItem ? "Save Changes" : "Add Item"}
+                </Button>
+              </div>
+            </form>
+          </div>
         </DialogContent>
       </Dialog>
 

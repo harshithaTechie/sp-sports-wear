@@ -73,9 +73,9 @@ function Products() {
   return (
     <>
       <section className="bg-navy text-white">
-        <div className="container-x py-14 md:py-20">
+        <div className="container-x py-12 sm:py-14 md:py-20">
           <span className="eyebrow text-orange">Design Catalog</span>
-          <h1 className="mt-3 font-display text-4xl md:text-5xl font-bold">
+          <h1 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-balance">
             Sportswear designs, customized for your team.
           </h1>
           <p className="mt-4 max-w-2xl text-white/75">
@@ -83,7 +83,7 @@ function Products() {
             Browse designs and get a custom quote based on your quantity.
           </p>
 
-          <div className="mt-8 flex flex-col md:flex-row gap-3 max-w-3xl">
+          <div className="mt-6 sm:mt-8 flex flex-col md:flex-row gap-3 max-w-3xl">
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60" />
               <input
@@ -98,14 +98,14 @@ function Products() {
       </section>
 
       <Section>
-        <div className="mb-8 overflow-x-auto">
+        <div className="mb-6 sm:mb-8 overflow-x-auto">
           <div className="flex gap-2 min-w-full flex-wrap">
             {tabs.map((tab) => (
               <button
                 key={tab.slug}
                 onClick={() => setCat(tab.slug)}
                 className={cn(
-                  "rounded-full border px-4 py-2 text-xs font-semibold transition whitespace-nowrap",
+                  "rounded-full border px-3 sm:px-4 py-2 text-xs font-semibold transition whitespace-nowrap",
                   cat === tab.slug
                     ? "border-transparent bg-primary text-primary-foreground"
                     : "border-border bg-card text-foreground/70 hover:border-primary hover:text-primary",
@@ -118,15 +118,15 @@ function Products() {
         </div>
 
         {products.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
+          <div className="rounded-2xl border border-dashed border-border p-8 sm:p-12 text-center text-muted-foreground">
             New designs are being added — please check back soon or contact us for a custom quote.
           </div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
+          <div className="rounded-2xl border border-dashed border-border p-8 sm:p-12 text-center text-muted-foreground">
             No designs match your search. Try a different keyword or category.
           </div>
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filtered.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}

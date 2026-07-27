@@ -124,9 +124,9 @@ function AdminSettings() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-3xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-3xl border border-border bg-card p-4 md:p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
             <div className="space-y-3">
               <Label htmlFor="business_name">Business Name</Label>
               <Input
@@ -143,7 +143,7 @@ function AdminSettings() {
                 onChange={(e) => setValue("business_tagline", e.target.value || null)}
               />
             </div>
-            <div className="space-y-3 lg:col-span-2">
+            <div className="space-y-3 sm:col-span-2 lg:col-span-2">
               <Label>Logo Upload</Label>
               <ImageUpload
                 bucket="site-logos"
@@ -170,7 +170,7 @@ function AdminSettings() {
               />
               {errors.whatsapp_number ? <p className="text-sm text-destructive">{errors.whatsapp_number}</p> : null}
             </div>
-            <div className="space-y-3 lg:col-span-2">
+            <div className="space-y-3 sm:col-span-2 lg:col-span-2">
               <Label htmlFor="email_address">Email Address</Label>
               <Input
                 id="email_address"
@@ -180,7 +180,7 @@ function AdminSettings() {
               />
               {errors.email_address ? <p className="text-sm text-destructive">{errors.email_address}</p> : null}
             </div>
-            <div className="space-y-3 lg:col-span-2">
+            <div className="space-y-3 sm:col-span-2 lg:col-span-2">
               <Label htmlFor="business_address">Business Address</Label>
               <Textarea
                 id="business_address"

@@ -127,41 +127,41 @@ function Home() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-br from-navy/60 via-navy/20 to-transparent" />
 
-        <div className="container-x relative py-16 md:py-28 lg:py-36">
+        <div className="container-x relative py-12 sm:py-16 md:py-24 lg:py-32">
           <div className="max-w-3xl fade-in-up">
             <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-white">
               <span className="h-1.5 w-1.5 rounded-full bg-orange" />
               Custom Sportswear Manufacturer · India
             </span>
-            <h1 className="mt-6 font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.05] text-balance">
+            <h1 className="mt-4 sm:mt-6 font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] sm:leading-[1.05] text-balance">
               Premium Sportswear <span className="text-orange">Manufacturer.</span>
             </h1>
-            <p className="mt-5 font-display text-xl md:text-2xl font-semibold text-white/95">
+            <p className="mt-4 sm:mt-5 font-display text-lg sm:text-xl md:text-2xl font-semibold text-white/95">
               Your Design. <span className="text-orange">Your Team.</span> Your Identity.
             </p>
-            <p className="mt-5 max-w-xl text-base md:text-lg text-white/80">
+            <p className="mt-4 sm:mt-5 max-w-xl text-sm sm:text-base md:text-lg text-white/80">
               Custom Jerseys, Tracksuits, Shorts, Lowers, Sleeveless T-Shirts, Caps &amp; Flags for
               Schools, Colleges, Teams, Events and Festivals.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-6 sm:mt-8 flex flex-wrap gap-3">
               <Link
                 to="/customize"
-                className="inline-flex items-center gap-2 rounded-md bg-accent-gradient px-6 py-3.5 text-sm font-semibold text-white shadow-glow hover:brightness-110 transition"
+                className="inline-flex items-center gap-2 rounded-md bg-accent-gradient px-5 py-3 sm:px-6 sm:py-3.5 text-sm font-semibold text-white shadow-glow hover:brightness-110 transition"
               >
                 Customize Now <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 to="/products"
-                className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3.5 text-sm font-semibold text-navy hover:bg-white/90 transition"
+                className="inline-flex items-center gap-2 rounded-md bg-white px-5 py-3 sm:px-6 sm:py-3.5 text-sm font-semibold text-navy hover:bg-white/90 transition"
               >
                 View Designs
               </Link>
             </div>
 
-            <ul className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3 max-w-2xl">
+            <ul className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 gap-y-2 sm:gap-y-3 max-w-2xl">
               {HERO_FEATURES.map((f) => (
-                <li key={f} className="flex items-center gap-2.5 text-sm text-white/90">
-                  <span className="grid h-5 w-5 place-items-center rounded-full bg-orange/20 border border-orange">
+                <li key={f} className="flex items-center gap-2.5 text-xs sm:text-sm text-white/90">
+                  <span className="grid h-5 w-5 place-items-center rounded-full bg-orange/20 border border-orange flex-shrink-0">
                     <span className="h-1.5 w-1.5 rounded-full bg-orange" />
                   </span>
                   {f}
@@ -169,10 +169,10 @@ function Home() {
               ))}
             </ul>
 
-            <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 max-w-2xl text-[11px] uppercase tracking-widest text-white/70">
+            <div className="mt-4 sm:mt-6 flex flex-wrap gap-x-4 sm:gap-x-5 gap-y-2 max-w-2xl text-[10px] sm:text-[11px] uppercase tracking-widest text-white/70">
               {HERO_SHIPPING.map((s) => (
                 <span key={s} className="flex items-center gap-2">
-                  <span className="h-1 w-1 rounded-full bg-orange" />
+                  <span className="h-1 w-1 rounded-full bg-orange flex-shrink-0" />
                   {s}
                 </span>
               ))}

@@ -195,21 +195,23 @@ function DesignsPage() {
           <DialogHeader>
             <DialogTitle>{editingProduct ? "Edit Design" : "Add New Design"}</DialogTitle>
           </DialogHeader>
-          {loading ? (
-            <p className="text-sm text-muted-foreground">Loading categories…</p>
-          ) : !hasCategories ? (
-            <p className="text-sm text-muted-foreground">
-              You need at least one category before adding a design. Create one from the Categories
-              page first.
-            </p>
-          ) : (
-            <DesignForm
-              product={editingProduct}
-              categories={categories}
-              onSaved={handleSaved}
-              onCancel={() => setFormOpen(false)}
-            />
-          )}
+          <div className="overflow-y-auto max-h-[calc(90vh-120px)] pr-2">
+            {loading ? (
+              <p className="text-sm text-muted-foreground">Loading categories…</p>
+            ) : !hasCategories ? (
+              <p className="text-sm text-muted-foreground">
+                You need at least one category before adding a design. Create one from the Categories
+                page first.
+              </p>
+            ) : (
+              <DesignForm
+                product={editingProduct}
+                categories={categories}
+                onSaved={handleSaved}
+                onCancel={() => setFormOpen(false)}
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 

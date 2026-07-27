@@ -42,7 +42,6 @@ function CategoriesPage() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const [sortOrder, setSortOrder] = useState("0");
 
   useEffect(() => {
@@ -69,7 +68,6 @@ function CategoriesPage() {
     setName("");
     setSlug("");
     setDescription("");
-    setImageUrl("");
     setSortOrder("0");
     setEditingCategory(null);
   }
@@ -84,7 +82,6 @@ function CategoriesPage() {
     setName(category.name);
     setSlug(category.slug);
     setDescription(category.description ?? "");
-    setImageUrl(category.image_url ?? "");
     setSortOrder(category.sort_order?.toString() ?? "0");
     setFormOpen(true);
   }
@@ -97,7 +94,6 @@ function CategoriesPage() {
         name,
         slug: slug || slugify(name),
         description: description || undefined,
-        image_url: imageUrl || undefined,
         sort_order: Number(sortOrder) || 0,
       };
 
@@ -155,7 +151,7 @@ function CategoriesPage() {
         ) : categories.length === 0 ? (
           <div className="p-8 text-center text-sm text-muted-foreground">No categories yet.</div>
         ) : (
-          <table className="min-w-full text-sm">
+          <table className="min-w-[600px] w-full text-sm">
             <thead className="bg-muted/70 text-left">
               <tr>
                 <th className="px-4 py-3">Name</th>
@@ -196,43 +192,41 @@ function CategoriesPage() {
       </div>
 
       <Dialog open={formOpen} onOpenChange={(open) => { if (!open) { resetForm(); setFormOpen(false); } else { setFormOpen(true); } }}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingCategory ? "Edit Category" : "Add Category"}</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="category-name">Name</Label>
-              <Input id="category-name" value={name} onChange={(e) => setName(e.target.value)} required />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="category-slug">Slug</Label>
-              <Input
-                id="category-slug"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                placeholder="jerseys"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="category-image">Image URL</Label>
-              <Input id="category-image" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="category-sort">Sort Order</Label>
-              <Input id="category-sort" type="number" min={0} value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="category-description">Description</Label>
-              <Textarea id="category-description" rows={4} value={description} onChange={(e) => setDescription(e.target.value)} />
-            </div>
-            <div className="flex justify-end gap-3">
-              <Button type="button" variant="outline" onClick={() => { resetForm(); setFormOpen(false); }}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={saving}>{saving ? "Saving…" : editingCategory ? "Save Changes" : "Add Category"}</Button>
-            </div>
-          </form>
+          <div className="overflow-y-auto max-h-[calc(90vh-120px)] pr-2">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="category-name">Name</Label>
+                <Input id="category-name" value={name} onChange={(e) => setName(e.target.value)} required />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="category-slug">Slug</Label>
+                <Input
+                  id="category-slug"
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  placeholder="jerseys"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="category-sort">Sort Order</Label>
+                <Input id="category-sort" type="number" min={0} value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="category-description">Description</Label>
+                <Textarea id="category-description" rows={4} value={description} onChange={(e) => setDescription(e.target.value)} />
+              </div>
+              <div className="flex justify-end gap-3">
+                <Button type="button" variant="outline" onClick={() => { resetForm(); setFormOpen(false); }}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={saving}>{saving ? "Saving…" : editingCategory ? "Save Changes" : "Add Category"}</Button>
+              </div>
+            </form>
+          </div>
         </DialogContent>
       </Dialog>
 

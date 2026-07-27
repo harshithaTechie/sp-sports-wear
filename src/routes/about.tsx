@@ -24,17 +24,17 @@ function About() {
   return (
     <>
       <section className="bg-navy text-white">
-        <div className="container-x py-16 md:py-24">
+        <div className="container-x py-12 sm:py-16 md:py-24">
           <span className="eyebrow text-orange">About Us</span>
-          <h1 className="mt-3 font-display text-4xl md:text-6xl font-bold text-balance max-w-3xl">
+          <h1 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-balance max-w-3xl">
             Custom sportswear manufacturer. Made in India.
           </h1>
-          <p className="mt-5 text-white/75 max-w-2xl text-lg">
+          <p className="mt-4 sm:mt-5 text-white/75 max-w-2xl text-base sm:text-lg">
             SP Sports Wear is a dedicated custom sportswear manufacturer specialising in
             bulk orders, premium fabrics, custom printing and team uniforms for schools,
             colleges and events across India.
           </p>
-          <div className="mt-6 flex flex-wrap gap-2">
+          <div className="mt-5 sm:mt-6 flex flex-wrap gap-2">
             {["Bulk Orders", "Premium Fabrics", "Custom Printing", "Team Uniforms", "Schools & Colleges", "Events"].map((tag) => (
               <span key={tag} className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold text-white">
                 {tag}

@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, LayoutDashboard, Package, FolderKanban, ShoppingCart, Images, Settings, FileText } from "lucide-react";
+import { LogOut, LayoutDashboard, Package, FolderKanban, ShoppingCart, Images, Settings, FileText, Menu, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 
@@ -34,6 +34,7 @@ function AdminShell() {
   const [session, setSession] = useState<Session | null | undefined>(
     DEMO_MODE ? ({ user: { email: "demo@spsportswear.com" } } as unknown as Session) : undefined,
   );
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (DEMO_MODE) return;
@@ -119,21 +120,42 @@ function AdminShell() {
   // Authenticated admin shell
   return (
     <div className="min-h-screen bg-background">
+      {/* Mobile header */}
+      <div className="md:hidden flex items-center justify-between border-b border-border bg-card p-4">
+        <div>
+          <div className="font-display text-lg font-bold text-primary">SP Admin</div>
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+            Control Panel
+          </div>
+        </div>
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="p-2 rounded-md hover:bg-muted"
+          aria-label="Toggle menu"
+        >
+          {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
       <div className="grid md:grid-cols-[240px_1fr]">
-        <aside className="border-r border-border bg-card md:min-h-screen">
-          <div className="p-5 border-b border-border">
+        {/* Sidebar */}
+        <aside className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-border bg-card transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div className="hidden md:block p-5 border-b border-border">
             <div className="font-display text-lg font-bold text-primary">SP Admin</div>
             <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
               Control Panel
             </div>
           </div>
-          <nav className="p-3 flex flex-col gap-1">
+          <nav className="p-3 flex flex-col gap-1 overflow-y-auto h-[calc(100vh-72px)] md:h-auto">
             {NAV.map((n, i) => {
               const active = pathname === n.to || pathname.startsWith(n.to + "/");
               return (
                 <button
                   key={i}
-                  onClick={() => navigate({ to: n.to })}
+                  onClick={() => {
+                    navigate({ to: n.to });
+                    setSidebarOpen(false);
+                  }}
                   className={`flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-left transition ${
                     active
                       ? "bg-primary text-primary-foreground"
@@ -163,7 +185,17 @@ function AdminShell() {
             </button>
           </nav>
         </aside>
-        <main className="p-6 md:p-10">
+
+        {/* Overlay for mobile */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-black/50 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Main content */}
+        <main className="p-4 md:p-6 lg:p-10">
           <Outlet />
         </main>
       </div>

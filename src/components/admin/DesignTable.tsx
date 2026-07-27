@@ -47,7 +47,7 @@ export function DesignTable({
           {products.map((product) => (
             <TableRow key={product.id}>
               <TableCell>
-                <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-md border border-border bg-muted">
+                <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-md border border-border bg-muted flex-shrink-0">
                   {product.image_url ? (
                     <img
                       src={product.image_url}
@@ -59,7 +59,7 @@ export function DesignTable({
                   )}
                 </div>
               </TableCell>
-              <TableCell className="font-medium">
+              <TableCell className="font-medium min-w-[150px]">
                 {product.name}
                 {product.featured && (
                   <Badge variant="secondary" className="ml-2 align-middle">
@@ -68,18 +68,18 @@ export function DesignTable({
                 )}
                 <div className="text-xs text-muted-foreground">/{product.slug}</div>
               </TableCell>
-              <TableCell>
+              <TableCell className="min-w-[120px]">
                 {product.category_id
                   ? (categoryNames[product.category_id] ?? "Uncategorized")
                   : "Uncategorized"}
               </TableCell>
-              <TableCell>{product.moq ?? "—"}</TableCell>
-              <TableCell>
+              <TableCell className="min-w-[60px]">{product.moq ?? "—"}</TableCell>
+              <TableCell className="min-w-[80px]">
                 <Badge variant={product.is_active ? "default" : "outline"}>
                   {product.is_active ? "Active" : "Inactive"}
                 </Badge>
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right min-w-[100px]">
                 <div className="flex justify-end gap-1">
                   <Button
                     variant="ghost"

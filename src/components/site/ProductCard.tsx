@@ -76,6 +76,7 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
           </button>
           <Link
             to="/customize"
+            search={{ designSlug: product.slug }}
             onClick={(event) => event.stopPropagation()}
             className="inline-flex items-center justify-center rounded-md bg-accent-gradient px-3 py-2 text-xs font-semibold text-white shadow-glow hover:brightness-110 transition"
           >

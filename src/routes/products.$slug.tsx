@@ -179,7 +179,7 @@ function ProductDetail() {
 
             <div className="mt-6 flex flex-wrap gap-3">
               <button
-                onClick={() => navigate({ to: "/customize" })}
+                onClick={() => navigate({ to: "/customize", search: { designSlug: product.slug } })}
                 className="inline-flex items-center justify-center gap-2 rounded-md bg-accent-gradient px-6 py-3.5 text-sm font-semibold text-white shadow-glow hover:brightness-110 transition"
               >
                 Customize Now
