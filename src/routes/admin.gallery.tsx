@@ -189,17 +189,17 @@ function GalleryPage() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-3xl font-bold text-primary">Gallery</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-primary">Gallery</h1>
           <p className="mt-1 text-sm text-muted-foreground">Showcase featured designs and client work.</p>
         </div>
-        <Button onClick={openAddForm}>
+        <Button onClick={openAddForm} className="w-full sm:w-auto">
           <Plus className="h-4 w-4" /> Add Gallery Item
         </Button>
       </div>
 
-      <div className="mt-6 rounded-3xl border border-border bg-card p-4">
+      <div className="mt-6 rounded-2xl sm:rounded-3xl border border-border bg-card p-3 sm:p-4">
         {loading ? (
           <div className="rounded-2xl border border-dashed border-border bg-background p-10 text-center text-sm text-muted-foreground">
             Loading gallery…
@@ -209,10 +209,13 @@ function GalleryPage() {
             No gallery items yet.
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {items.map((item) => (
-              <div key={item.id} className="overflow-hidden rounded-3xl border border-border bg-background shadow-sm">
-                <div className="relative h-64 bg-muted">
+              <div
+                key={item.id}
+                className="overflow-hidden rounded-2xl sm:rounded-3xl border border-border bg-background shadow-sm"
+              >
+                <div className="relative h-48 sm:h-64 bg-muted">
                   {item.image_url ? (
                     <img
                       src={item.image_url}
@@ -225,13 +228,13 @@ function GalleryPage() {
                     </div>
                   )}
                 </div>
-                <div className="space-y-3 p-5">
+                <div className="space-y-3 p-4 sm:p-5">
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h2 className="font-display text-lg font-semibold text-primary">{item.title}</h2>
+                    <div className="min-w-0">
+                      <h2 className="font-display text-base sm:text-lg font-semibold text-primary break-words">{item.title}</h2>
                       <p className="mt-1 text-sm text-muted-foreground">{item.category ?? "Uncategorized"}</p>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex shrink-0 gap-1">
                       <Button variant="ghost" size="icon" onClick={() => openEditForm(item)} aria-label="Edit">
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -262,7 +265,7 @@ function GalleryPage() {
       </div>
 
       <Dialog open={formOpen} onOpenChange={(open) => { if (!open) { resetForm(); setFormOpen(false); } else { setFormOpen(true); } }}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-xl sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingItem ? "Edit Gallery Item" : "Add Gallery Item"}</DialogTitle>
           </DialogHeader>
@@ -293,8 +296,8 @@ function GalleryPage() {
               </div>
               <div className="space-y-3">
                 <Label>Upload Image</Label>
-                <div className="rounded-3xl border border-border bg-muted p-4">
-                  <div className="mb-3 flex h-52 items-center justify-center overflow-hidden rounded-2xl bg-slate-950">
+                <div className="rounded-2xl sm:rounded-3xl border border-border bg-muted p-3 sm:p-4">
+                  <div className="mb-3 flex h-40 sm:h-52 items-center justify-center overflow-hidden rounded-2xl bg-slate-950">
                     {imageUrl ? (
                       <img src={imageUrl} alt="Selected image preview" className="h-full w-full object-cover" />
                     ) : (
@@ -311,11 +314,12 @@ function GalleryPage() {
                     className="hidden"
                     onChange={(e) => handleImageFile(e.target.files?.[0] ?? undefined)}
                   />
-                  <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
+                      className="w-full sm:w-auto"
                       disabled={uploadingImage}
                       onClick={() => fileInputRef.current?.click()}
                     >
@@ -335,11 +339,23 @@ function GalleryPage() {
                 <Label htmlFor="gallery-description">Description</Label>
                 <Textarea id="gallery-description" rows={4} value={description} onChange={(e) => setDescription(e.target.value)} />
               </div>
-              <div className="flex justify-end gap-3">
-                <Button type="button" variant="outline" onClick={() => { resetForm(); setFormOpen(false); }}>
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full sm:w-auto"
+                  onClick={() => {
+                    resetForm();
+                    setFormOpen(false);
+                  }}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={saving || uploadingImage || !canSubmit}>
+                <Button
+                  type="submit"
+                  className="w-full sm:w-auto"
+                  disabled={saving || uploadingImage || !canSubmit}
+                >
                   {uploadingImage ? "Uploading…" : saving ? "Saving…" : editingItem ? "Save Changes" : "Add Item"}
                 </Button>
               </div>

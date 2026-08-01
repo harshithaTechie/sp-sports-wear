@@ -121,7 +121,7 @@ function AdminShell() {
   return (
     <div className="min-h-screen bg-background">
       {/* Mobile header */}
-      <div className="md:hidden flex items-center justify-between border-b border-border bg-card p-4">
+      <div className="lg:hidden flex items-center justify-between border-b border-border bg-card p-4">
         <div>
           <div className="font-display text-lg font-bold text-primary">SP Admin</div>
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -137,16 +137,18 @@ function AdminShell() {
         </button>
       </div>
 
-      <div className="grid md:grid-cols-[240px_1fr]">
+      <div className="grid lg:grid-cols-[240px_1fr]">
         {/* Sidebar */}
-        <aside className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-border bg-card transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-          <div className="hidden md:block p-5 border-b border-border">
+        <aside
+          className={`fixed inset-y-0 left-0 z-50 w-64 max-w-[85vw] transform border-r border-border bg-card transition-transform duration-200 ease-in-out lg:relative lg:w-auto lg:max-w-none lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        >
+          <div className="hidden lg:block p-5 border-b border-border">
             <div className="font-display text-lg font-bold text-primary">SP Admin</div>
             <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
               Control Panel
             </div>
           </div>
-          <nav className="p-3 flex flex-col gap-1 overflow-y-auto h-[calc(100vh-72px)] md:h-auto">
+          <nav className="p-3 flex flex-col gap-1 overflow-y-auto h-full lg:h-auto">
             {NAV.map((n, i) => {
               const active = pathname === n.to || pathname.startsWith(n.to + "/");
               return (
@@ -189,13 +191,13 @@ function AdminShell() {
         {/* Overlay for mobile */}
         {sidebarOpen && (
           <div
-            className="fixed inset-0 z-40 bg-black/50 md:hidden"
+            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
 
         {/* Main content */}
-        <main className="p-4 md:p-6 lg:p-10">
+        <main className="min-w-0 p-4 md:p-6 lg:p-10">
           <Outlet />
         </main>
       </div>

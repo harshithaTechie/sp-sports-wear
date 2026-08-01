@@ -153,7 +153,7 @@ function OrdersPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold text-primary">Orders</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-primary">Orders</h1>
           <p className="mt-1 text-sm text-muted-foreground">Review incoming orders and update their progress.</p>
         </div>
       </div>
@@ -203,7 +203,7 @@ function OrdersPage() {
       </td>
 
       <td className="px-4 py-3">
-        <div className="max-w-full sm:max-w-[180px]">
+        <div className="w-full sm:w-[180px]">
           <Select
             value={order.status ?? statuses[0]}
             onValueChange={(value) => updateStatus(order.id, value)}
@@ -232,15 +232,17 @@ function OrdersPage() {
               View
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="w-[95vw] max-w-xl sm:max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Order Details - {selectedOrder?.order_id}</DialogTitle>
               <DialogDescription>Full order information and items</DialogDescription>
             </DialogHeader>
             <OrderDetailView order={selectedOrder} orderItems={orderItems} loadingItems={loadingItems} />
-            <DialogFooter>
+            <DialogFooter className="gap-3 sm:gap-0">
               <DialogClose asChild>
-                <Button variant="outline">Close</Button>
+                <Button variant="outline" className="w-full sm:w-auto">
+                  Close
+                </Button>
               </DialogClose>
             </DialogFooter>
           </DialogContent>
@@ -265,29 +267,31 @@ function OrderDetailView({ order, orderItems, loadingItems }: { order: OrderRow 
       <div className="space-y-3">
         <h3 className="font-semibold text-primary">Customer Information</h3>
         <div className="grid gap-2 text-sm">
-          <div className="flex justify-between">
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:gap-4">
             <span className="text-muted-foreground">Name:</span>
-            <span className="font-medium">{order.customer_name}</span>
+            <span className="font-medium break-words">{order.customer_name}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:gap-4">
             <span className="text-muted-foreground">Email:</span>
-            <span>{order.customer_email || "—"}</span>
+            <span className="break-all">{order.customer_email || "—"}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:gap-4">
             <span className="text-muted-foreground">Phone:</span>
-            <span>{order.customer_phone}</span>
+            <span className="break-all">{order.customer_phone}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:gap-4">
             <span className="text-muted-foreground">WhatsApp:</span>
-            <span>{order.customer_whatsapp || "—"}</span>
+            <span className="break-all">{order.customer_whatsapp || "—"}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:gap-4">
             <span className="text-muted-foreground">Organization:</span>
-            <span>{order.organization || "—"}</span>
+            <span className="break-words">{order.organization || "—"}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:gap-4">
             <span className="text-muted-foreground">Delivery Address:</span>
-            <span className="max-w-[60%] text-right">{order.delivery_address || "—"}</span>
+            <span className="break-words sm:max-w-[60%] sm:text-right">
+              {order.delivery_address || "—"}
+            </span>
           </div>
         </div>
       </div>
@@ -346,7 +350,7 @@ function OrderDetailView({ order, orderItems, loadingItems }: { order: OrderRow 
                 {item.customization && Object.keys(item.customization).length > 0 && (
                   <div className="text-sm">
                     <div className="font-medium text-muted-foreground mb-1">Customization:</div>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
                       {item.customization.color && (
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Color:</span>
@@ -372,13 +376,13 @@ function OrderDetailView({ order, orderItems, loadingItems }: { order: OrderRow 
                         </div>
                       )}
                       {item.customization.players && (
-                        <div className="col-span-2">
+                        <div className="sm:col-span-2">
                           <span className="text-muted-foreground">Players: </span>
                           <span>{item.customization.players}</span>
                         </div>
                       )}
                       {item.customization.sponsor && (
-                        <div className="col-span-2">
+                        <div className="sm:col-span-2">
                           <span className="text-muted-foreground">Sponsors: </span>
                           <span>{item.customization.sponsor}</span>
                         </div>
@@ -395,15 +399,15 @@ function OrderDetailView({ order, orderItems, loadingItems }: { order: OrderRow 
       {/* Order Metadata */}
       <div className="space-y-3 pt-4 border-t border-border">
         <div className="grid gap-2 text-sm">
-          <div className="flex justify-between">
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:gap-4">
             <span className="text-muted-foreground">Total Amount:</span>
             <span className="font-medium">{order.total_amount ? `₹${order.total_amount}` : "—"}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:gap-4">
             <span className="text-muted-foreground">Order Date:</span>
             <span>{order.created_at ? new Date(order.created_at).toLocaleString() : "—"}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:gap-4">
             <span className="text-muted-foreground">Last Updated:</span>
             <span>{order.updated_at ? new Date(order.updated_at).toLocaleString() : "—"}</span>
           </div>

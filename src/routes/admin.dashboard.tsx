@@ -48,28 +48,31 @@ function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-bold text-primary">Dashboard</h1>
+      <h1 className="font-display text-2xl sm:text-3xl font-bold text-primary">Dashboard</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Overview of your SP Sports Wear operations.
       </p>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-6 sm:mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {STATS.map((s) => (
-          <div key={s.label} className="rounded-2xl border border-border bg-card p-5 shadow-card">
-            <div className="flex items-center justify-between">
+          <div
+            key={s.label}
+            className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-card"
+          >
+            <div className="flex items-center justify-between gap-2">
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {s.label}
               </span>
-              <s.icon className="h-4 w-4 text-secondary" />
+              <s.icon className="h-4 w-4 shrink-0 text-secondary" />
             </div>
-            <div className="mt-3 font-display text-3xl font-bold text-primary">
+            <div className="mt-3 font-display text-2xl sm:text-3xl font-bold text-primary">
               {loading ? "..." : counts[s.key] ?? 0}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-10 rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+      <div className="mt-8 sm:mt-10 rounded-2xl border border-dashed border-border p-4 sm:p-8 text-center text-sm text-muted-foreground">
         Admin modules (Products, Categories, Orders, Gallery, Settings) will be
         connected here in upcoming updates.
       </div>

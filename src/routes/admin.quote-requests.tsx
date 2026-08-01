@@ -173,7 +173,7 @@ function QuoteRequestsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-2xl sm:text-3xl font-bold">
             Quote Requests
           </h1>
 
@@ -277,7 +277,7 @@ function QuoteRequestsPage() {
                         updateStatus(quote.id, value)
                       }
                     >
-                      <SelectTrigger className="w-44">
+                      <SelectTrigger className="w-full min-w-[11rem] sm:w-44">
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
 
@@ -309,7 +309,7 @@ function QuoteRequestsPage() {
     </Button>
   </DialogTrigger>
 
-  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+  <DialogContent className="w-[95vw] max-w-xl sm:max-w-2xl max-h-[90vh] overflow-y-auto">
     <DialogHeader>
       <DialogTitle>
         Quote Details
@@ -353,11 +353,11 @@ function QuoteRequestsPage() {
   <div>
     <strong>Selected Design</strong>
 
-    <div className="mt-2 flex items-center gap-4">
+    <div className="mt-2 flex flex-wrap items-center gap-4">
       <img
         src={quote.design.image_url ?? ""}
         alt={quote.design.name}
-        className="h-24 w-24 rounded border object-cover"
+        className="h-24 w-24 shrink-0 rounded border object-cover"
       />
 
       <div>
@@ -396,16 +396,16 @@ function QuoteRequestsPage() {
 
       <div>
         <strong>Quotation Details</strong>
-        <div className="rounded border p-3 whitespace-pre-wrap text-xs">
+        <div className="rounded border p-3 whitespace-pre-wrap break-words text-xs">
           {quote.notes ?? "—"}
         </div>
       </div>
 
     </div>
 
-    <DialogFooter>
+    <DialogFooter className="gap-3 sm:gap-0">
       <DialogClose asChild>
-        <Button variant="secondary">
+        <Button variant="secondary" className="w-full sm:w-auto">
           Close
         </Button>
       </DialogClose>

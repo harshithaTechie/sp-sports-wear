@@ -26,20 +26,22 @@ export function ConfirmDeleteDialog({
 }) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="w-[95vw] max-w-xl sm:max-w-lg">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
+        <AlertDialogFooter className="gap-3 sm:gap-0">
+          <AlertDialogCancel className="w-full sm:w-auto" disabled={loading}>
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={(e) => {
               e.preventDefault();
               onConfirm();
             }}
             disabled={loading}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="w-full sm:w-auto bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             {loading ? "Deleting…" : "Delete"}
           </AlertDialogAction>

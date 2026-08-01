@@ -30,16 +30,18 @@ function AdminLogin() {
 
   return (
     <div className="min-h-screen grid place-items-center bg-navy px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl p-8">
+      <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl p-6 sm:p-8">
         <div className="flex flex-col items-center text-center">
           <img src={spLogo} alt="SP Sports Wear" className="h-16 w-16 object-contain" />
-          <h1 className="mt-4 font-display text-2xl font-bold text-primary">Admin Login</h1>
+          <h1 className="mt-4 font-display text-xl sm:text-2xl font-bold text-primary">
+            Admin Login
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Secure access for SP Sports Wear administrators.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-6 sm:mt-8 space-y-4">
           <div>
             <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Email
