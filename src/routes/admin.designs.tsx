@@ -128,14 +128,14 @@ function DesignsPage() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-3xl font-bold text-primary">Designs</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-primary">Designs</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Manage all sportswear designs shown on the catalog.
           </p>
         </div>
-        <Button onClick={openAddForm}>
+        <Button onClick={openAddForm} className="w-full sm:w-auto">
           <Plus className="h-4 w-4" /> Add Design
         </Button>
       </div>
@@ -191,7 +191,7 @@ function DesignsPage() {
       </div>
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+        <DialogContent className="w-[95vw] max-w-xl max-h-[90vh] overflow-y-auto sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>{editingProduct ? "Edit Design" : "Add New Design"}</DialogTitle>
           </DialogHeader>

@@ -135,12 +135,12 @@ function CategoriesPage() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-3xl font-bold text-primary">Categories</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-primary">Categories</h1>
           <p className="mt-1 text-sm text-muted-foreground">Manage the main product categories shown on the catalog.</p>
         </div>
-        <Button onClick={openAddForm}>
+        <Button onClick={openAddForm} className="w-full sm:w-auto">
           <Plus className="h-4 w-4" /> Add Category
         </Button>
       </div>
@@ -192,7 +192,7 @@ function CategoriesPage() {
       </div>
 
       <Dialog open={formOpen} onOpenChange={(open) => { if (!open) { resetForm(); setFormOpen(false); } else { setFormOpen(true); } }}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-xl sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingCategory ? "Edit Category" : "Add Category"}</DialogTitle>
           </DialogHeader>
@@ -219,11 +219,19 @@ function CategoriesPage() {
                 <Label htmlFor="category-description">Description</Label>
                 <Textarea id="category-description" rows={4} value={description} onChange={(e) => setDescription(e.target.value)} />
               </div>
-              <div className="flex justify-end gap-3">
-                <Button type="button" variant="outline" onClick={() => { resetForm(); setFormOpen(false); }}>
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full sm:w-auto"
+                  onClick={() => {
+                    resetForm();
+                    setFormOpen(false);
+                  }}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={saving}>{saving ? "Saving…" : editingCategory ? "Save Changes" : "Add Category"}</Button>
+                <Button type="submit" className="w-full sm:w-auto" disabled={saving}>{saving ? "Saving…" : editingCategory ? "Save Changes" : "Add Category"}</Button>
               </div>
             </form>
           </div>

@@ -117,16 +117,16 @@ function AdminSettings() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold text-primary">Settings</h1>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-primary">Settings</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Manage business contact details, branding, and social links from one place.
           </p>
         </div>
       </div>
 
-      <div className="mt-6 rounded-3xl border border-border bg-card p-4 md:p-6">
+      <div className="mt-6 rounded-2xl sm:rounded-3xl border border-border bg-card p-4 md:p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-3">
               <Label htmlFor="business_name">Business Name</Label>
               <Input
@@ -143,7 +143,7 @@ function AdminSettings() {
                 onChange={(e) => setValue("business_tagline", e.target.value || null)}
               />
             </div>
-            <div className="space-y-3 sm:col-span-2 lg:col-span-2">
+            <div className="space-y-3 md:col-span-2">
               <Label>Logo Upload</Label>
               <ImageUpload
                 bucket="site-logos"
@@ -170,7 +170,7 @@ function AdminSettings() {
               />
               {errors.whatsapp_number ? <p className="text-sm text-destructive">{errors.whatsapp_number}</p> : null}
             </div>
-            <div className="space-y-3 sm:col-span-2 lg:col-span-2">
+            <div className="space-y-3 md:col-span-2">
               <Label htmlFor="email_address">Email Address</Label>
               <Input
                 id="email_address"
@@ -180,7 +180,7 @@ function AdminSettings() {
               />
               {errors.email_address ? <p className="text-sm text-destructive">{errors.email_address}</p> : null}
             </div>
-            <div className="space-y-3 sm:col-span-2 lg:col-span-2">
+            <div className="space-y-3 md:col-span-2">
               <Label htmlFor="business_address">Business Address</Label>
               <Textarea
                 id="business_address"
@@ -228,7 +228,7 @@ function AdminSettings() {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-            <Button type="submit" disabled={loading || saving}>
+            <Button type="submit" className="w-full sm:w-auto" disabled={loading || saving}>
               {loading ? "Loading…" : saving ? "Saving…" : "Save Settings"}
             </Button>
           </div>

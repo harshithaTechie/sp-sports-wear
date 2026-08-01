@@ -238,7 +238,7 @@ export function DesignForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="name">Product Name *</Label>
           <Input id="name" {...register("name")} placeholder="e.g. Pro Cricket Jersey" />
@@ -257,7 +257,7 @@ export function DesignForm({
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="category_id">Category *</Label>
           <Select
@@ -328,7 +328,7 @@ export function DesignForm({
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="moq">MOQ (Minimum Order Quantity) *</Label>
           <Input id="moq" type="number" min={1} {...register("moq")} />
@@ -340,7 +340,7 @@ export function DesignForm({
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="sizes">Sizes (comma separated)</Label>
           <Input id="sizes" {...register("sizes")} placeholder="S, M, L, XL, XXL" />
@@ -357,7 +357,7 @@ export function DesignForm({
           <Label htmlFor="collar_types">Collar types (comma separated)</Label>
           <Input id="collar_types" {...register("collar_types")} placeholder="Round Neck, V-Neck" />
         </div>
-        <div className="space-y-1.5 sm:col-span-2 md:col-span-2">
+        <div className="space-y-1.5 md:col-span-2">
           <Label htmlFor="sleeve_types">Sleeve types (comma separated)</Label>
           <Input
             id="sleeve_types"
@@ -367,7 +367,7 @@ export function DesignForm({
         </div>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <ImageUpload
           bucket="product-images"
           value={imageUrl}
@@ -382,7 +382,7 @@ export function DesignForm({
         />
       </div>
 
-      <div className="flex flex-wrap gap-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:gap-8">
         <label className="flex items-center gap-3">
           <Switch checked={watch("featured")} onCheckedChange={(v) => setValue("featured", v)} />
           <span className="text-sm font-medium">Featured</span>
@@ -396,10 +396,16 @@ export function DesignForm({
       </div>
 
       <div className="flex flex-col sm:flex-row justify-end gap-3 border-t border-border pt-4">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={saving}>
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full sm:w-auto"
+          onClick={onCancel}
+          disabled={saving}
+        >
           Cancel
         </Button>
-        <Button type="submit" disabled={saving}>
+        <Button type="submit" className="w-full sm:w-auto" disabled={saving}>
           {saving ? "Saving…" : product ? "Save Changes" : "Add Design"}
         </Button>
       </div>

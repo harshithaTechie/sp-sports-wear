@@ -97,7 +97,7 @@ export function ImageUpload({
   return (
     <div className={cn("space-y-2", className)}>
       <span className="text-sm font-medium leading-none">{label}</span>
-      <div className="flex items-start gap-3">
+      <div className="flex flex-wrap items-start gap-3">
         <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-muted">
           {value ? (
             <img src={value} alt="" className="h-full w-full object-cover" />
@@ -107,7 +107,7 @@ export function ImageUpload({
             <Upload className="h-5 w-5 text-muted-foreground" />
           )}
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
           <input
             ref={inputRef}
             type="file"
